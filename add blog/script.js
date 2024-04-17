@@ -597,3 +597,4 @@ moveToHomepage.addEventListener("click", () => {
   document.location.href = "../index.html";
 });
 
+
