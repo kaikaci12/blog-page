@@ -35,13 +35,14 @@ const main = document.getElementById("main");
 let isError;
 let base64 = localStorage.getItem("base64");
 
-if(!localStorage.getItem("blogDesc") localStorage.setItem("blogDesc", "");
-if(!localStorage.getItem("email") localStorage.setItem("email", "")
-if(!localStorage.getItem("blogTitle") localStorage.setItem("blogTitle", "")
-if(!localStorage.getItem("authorInput") localStorage.setItem("authorInput", "")
-if(!localStorage.getItem("pathName")  localStorage.setItem("pathName", "")
-if(!localStorage.getItem("buttonArr") localStorage.setItem("buttonArr", []);
-if(!localStorage.getItem("base64")  localStorage.setItem("base64", "");
+if (!localStorage.getItem("blogDesc")) localStorage.setItem("blogDesc", "");
+if (!localStorage.getItem("email")) localStorage.setItem("email", "");
+if (!localStorage.getItem("blogTitle")) localStorage.setItem("blogTitle", "");
+if (!localStorage.getItem("authorInput")) localStorage.setItem("authorInput", "");
+if (!localStorage.getItem("pathName")) localStorage.setItem("pathName", "");
+if (!localStorage.getItem("buttonArr")) localStorage.setItem("buttonArr", JSON.stringify([]));
+if (!localStorage.getItem("base64")) localStorage.setItem("base64", "");
+
 
 if (!localStorage.getItem("authenticated")) {
   main.remove();
