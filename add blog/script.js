@@ -35,6 +35,16 @@ const main = document.getElementById("main");
 let isError;
 let base64 = localStorage.getItem("base64");
 
+localStorage.setItem("authorInput", "");
+localStorage.setItem("buttonArr", []);
+localStorage.setItem("pathName", "");
+localStorage.setItem("base64", "");
+localStorage.setItem("authorInput", "");
+localStorage.setItem("blogTitle", "");
+localStorage.setItem("blogDesc", "");
+localStorage.setItem("email", "");
+localStorage.setItem("blogDate", "");
+
 if (!localStorage.getItem("authenticated")) {
   main.remove();
 
