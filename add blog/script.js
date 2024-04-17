@@ -45,7 +45,7 @@ if (!localStorage.getItem("authenticated")) {
 
 const convertToBase64 = (file) => {
   return new Promise((resolve, reject) => {
-    console.log("File:", file); // Log the file to see if it's correctly passed
+    console.log("File:", file);
 
     if (!file || !file.type || !file.type.startsWith("image/")) {
       reject(new Error("Invalid file type or file not provided."));
@@ -335,7 +335,7 @@ arrowDown.addEventListener("click", () => {
   if (categoryList.children.length > 1) {
     categoryContainer.style.outline = "1px solid  #14D81C";
   } else {
-    // selectCategorySpan.style.display = "block";
+    selectCategorySpan.style.display = "block";
   }
 });
 
@@ -504,7 +504,9 @@ function validateInputs() {
 function toggleSubmitButton() {
   if (categoryList.children.length === 1) {
     submitBtn.classList.remove("active-submit");
+    selectCategorySpan.style.display = "block";
   }
+
   if (validateInputs()) {
     submitBtn.classList.add("active-submit");
     return true;
@@ -594,3 +596,4 @@ returnMainPage.addEventListener("click", () => {
 moveToHomepage.addEventListener("click", () => {
   document.location.href = "../index.html";
 });
+
