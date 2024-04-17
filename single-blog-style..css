@@ -424,13 +424,18 @@ main {
     font-size: 30px;
   }
   main {
-    padding-top: 12%;
+    padding-top: 30%;
   }
   .blog-description {
     padding: 5px;
+    width:100vw;
+    overflow-y:scroll;
   }
   .blog-description p {
     margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 9;
+    -webkit-box-orient: vertical;
     
   }
   .move-arrow {
