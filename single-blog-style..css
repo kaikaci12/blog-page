@@ -306,6 +306,7 @@ main {
   display: flex;
   width: 100%;
   justify-content: space-between;
+  margin-top:30%;
 }
 .familiar-blogs-container {
   padding: 0 76px;
