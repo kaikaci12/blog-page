@@ -279,3 +279,4 @@ async function seeWholeBlog(id) {
   const data = await response.json();
   console.log(data);
 }
+
