@@ -539,7 +539,7 @@ submitBtn.addEventListener("click", async (e) => {
   if (submitBtn.classList.contains("active-submit")) {
     console.log("sadasd");
     try {
-      const response = await fetch("http://localhost:4000/add-blog", {
+      const response = await fetch("https://blog-api-h6k6.onrender.com/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
