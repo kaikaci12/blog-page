@@ -1,260 +1,616 @@
-const blogSection = document.querySelector(".blogs-section");
-const logInBtn = document.querySelector(".login");
-const loginWindowContainer = document.querySelector(".login-window-container");
-const loginWindow = document.querySelector(".login-window");
-const emailInput = document.getElementById("email");
-const emaiLError = document.querySelector(".mail-err-container");
-const shesvla = document.querySelector(".login-container");
-const succeed = document.querySelector(".succeed");
-const addBlogBtn = document.getElementById("add-blog-btn");
-const okBtn = document.querySelector(".ok");
-const closeBtn = document.querySelectorAll(".window-close");
-const backArrow = document.querySelector(".move-arrow");
-const arrowLeft = document.getElementById("arrow-left");
-const arrowRight = document.getElementById("arrow-right");
-const similarBlog = [...document.querySelectorAll("similar-blog")];
-let similarBlogs = document.getElementById("similarBlogs");
-const queryParams = new URLSearchParams(window.location.search);
-console.log(queryParams.get("id"));
+const moveToHomepage = document.getElementById("move-arrow");
+const fileInput = document.getElementById("upload-input");
+const dropZone = document.getElementById("dropZone");
+const selectedImg = document.querySelector(".selected-img");
+const imageName = document.getElementById("image-name");
+const closeBtn = document.getElementById("close-btn");
+const form = document.querySelector("form");
+const authorInput = document.getElementById("author");
+const blogTitle = document.getElementById("blog-title");
+const blogDesr = document.getElementById("blog-description");
+const blogDate = document.getElementById("blog-date");
+const userMail = document.getElementById("email");
+const submitBtn = document.getElementById("submitBtn");
+const arrowDown = document.getElementById("arrow-down");
+const categorySelector = document.querySelector(".categories");
+const typeButtons = document.querySelectorAll(".blog-type");
+const categoryList = document.querySelector(".category-list");
+const selectCategorySpan = document.querySelector(".select-category");
+const fourSymblol = document.getElementById("4-symbol");
+const headingCharacters = document.querySelector(".symbol-limit");
+const twoWords = document.getElementById("two-words");
+const georgianSymbol = document.getElementById("georgian-only");
+const categoryContainer = document.querySelector(".category-chooser");
+const dateContainer = document.querySelector(".date-input");
+const emailContainer = document.querySelector(".email-container");
+const errorSpan = document.querySelectorAll(".error-span");
+const descrSymbol = document.querySelector(".description-symbol");
+let blogTypeBtns = document.querySelectorAll(".blog-type-btns");
+const emailErr = document.querySelector(".mail-err-container");
+const blogAddedWindow = document.querySelector(".blog-added-window");
+const windowClose = document.querySelector(".window-close");
+const returnMainPage = document.querySelector(".return-main-page");
+let clonedBtns = document.querySelectorAll(".cloned-btn-styles");
+const main = document.getElementById("main");
+let isError;
+let base64 = localStorage.getItem("base64");
 
-async function getSingleBlog() {
-  const response = await fetch("https://blog-api-h6k6.onrender.com/get-blogs");
-  let data = await response.json();
-  console.log(data);
-  const id = queryParams.get("id");
-  const blogById = data.find((blog) => {
-    return blog._id === id;
-  });
+if (!localStorage.getItem("blogDesc")) localStorage.setItem("blogDesc", "");
+if (!localStorage.getItem("email")) localStorage.setItem("email", "");
+if (!localStorage.getItem("blogTitle")) localStorage.setItem("blogTitle", "");
+if (!localStorage.getItem("authorInput"))
+  localStorage.setItem("authorInput", "");
+if (!localStorage.getItem("pathName")) localStorage.setItem("pathName", "");
+if (!localStorage.getItem("buttonArr"))
+  localStorage.setItem("buttonArr", JSON.stringify([]));
+if (!localStorage.getItem("base64")) localStorage.setItem("base64", "");
 
-  data = data.filter((data) => data._id !== blogById._id);
-  data.map((blog) => {
-    if (blog.types.some((type) => blogById.types.includes(type))) {
-      let blogDescr = blog.description.slice(0, 90);
-      let blogDate = blog.date.slice(0, 10);
-      let blogHTML = `
-            <div class="user-blog similar-blog">
-                <img src="${blog.image}" alt="blog-img" class="blog-img" />
-                <div class="blogger-info similar-blog-info">
-                    <span class="blogger-name similar-blog-name">${
-                      blog.author
-                    }</span>
-                    <div class="email-and-date">
-                        <span class="publish-date">${blogDate} .</span>
-                    </div>
-                    <div class="blog-title similar-blog-title">
-                        <h2>${blog.title}</h2>
-                    </div>
-                    <div class="blog-types-container familiar-types"></div>
-                </div>
-                <div class="blog-description similar-blog-descr">
-                    <p>${blogDescr + "..."}</p>
-                </div>
-                <div class="see-all">
-                    <span>სრულად ნახვა</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M5.93415 13.0052C5.64125 13.2981 5.64125 13.773 5.93415 14.0659C6.22704 14.3587 6.70191 14.3587 6.99481 14.0659L5.93415 13.0052ZM14.2855 6.46446C14.2855 6.05024 13.9498 5.71445 13.5355 5.71446L6.78555 5.71445C6.37133 5.71445 6.03555 6.05024 6.03555 6.46445C6.03555 6.87867 6.37133 7.21445 6.78555 7.21445H12.7855V13.2145C12.7855 13.6287 13.1213 13.9645 13.5355 13.9645C13.9498 13.9645 14.2855 13.6287 14.2855 13.2145L14.2855 6.46446ZM6.99481 14.0659L14.0659 6.99478L13.0052 5.93412L5.93415 13.0052L6.99481 14.0659Z" fill="#5D37F3"/>
-                    </svg>
-                </div>
-            </div>`;
-      similarBlogs.innerHTML += blogHTML;
+if (!localStorage.getItem("authenticated")) {
+  main.remove();
 
-      let currentBlog = similarBlogs.querySelector(".user-blog:last-child");
-      let typesContainer = currentBlog.querySelector(".blog-types-container");
+  document.body.innerHTML = "You Don't Have Access to this Page";
+  document.body.style.fontSize = "40px";
+  window.location.href = "/blog-page";
+}
 
-      blog.types.forEach((type) => {
-        let backgroundColor = "";
-        switch (type) {
-          case "მარკეტი":
-            backgroundColor = "#D6961C";
-            break;
-          case "აპლიკაცია":
-            backgroundColor = "#15C972";
-            break;
-          case "ხელოვნური ინტელექტი":
-            backgroundColor = "#B71FDD";
-            break;
-          case "Figma":
-            backgroundColor = "#08D2AE";
-            break;
-          case "კვლევა":
-            backgroundColor = "#60BE16";
-            break;
-          case "UI/UX":
-            backgroundColor = "#DC2828";
-            break;
-          default:
-            backgroundColor = "#000000";
-        }
-        let button = document.createElement("button");
-        button.classList.add("blog-type-btns");
-        button.textContent = type;
-        button.style.backgroundColor = backgroundColor;
-        button.style.color = "white";
-        typesContainer.appendChild(button);
-      });
+const convertToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    console.log("File:", file);
+
+    if (!file || !file.type || !file.type.startsWith("image/")) {
+      reject(new Error("Invalid file type or file not provided."));
+      return;
     }
-    const seeAll = document.querySelectorAll(".see-all");
-    seeAll.forEach((link, index) => {
-      link.addEventListener("click", () => {
-        data.map((blog, idx) => {
-          if (index === idx) {
-            document.location.href = `single-blog.html?id=${blog._id}`;
-          }
-        });
-      });
+
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(file);
+
+    fileReader.onload = () => {
+      resolve(fileReader.result);
+    };
+
+    fileReader.onerror = (error) => {
+      reject(error);
+    };
+    fileReader.onload = () => {
+      console.log("File loaded successfully.");
+      resolve(fileReader.result);
+    };
+
+    fileReader.onerror = (error) => {
+      console.error("Error reading file:", error);
+      reject(error);
+    };
+  });
+};
+
+selectedImg.style.display = "none";
+dropZone.addEventListener("dragover", (event) => {
+  event.preventDefault();
+  dropZone.classList.add("drag-over");
+});
+
+dropZone.addEventListener("dragleave", (event) => {
+  dropZone.classList.remove("drag-over");
+});
+function updateUI(base64) {
+  if (fileInput.files.length > 0) {
+    selectedImg.style.display = "flex";
+    dropZone.classList.remove("drag-over");
+    dropZone.style.display = "none";
+    imageName.innerHTML = fileInput.files[0].name;
+  } else {
+    selectedImg.style.display = "none";
+    dropZone.style.display = "flex";
+    imageName.innerHTML = "";
+  }
+}
+
+dropZone.addEventListener("drop", async (e) => {
+  e.preventDefault();
+  window.location.reload();
+  const files = e.dataTransfer.files;
+  if (files.length === 0) {
+    console.error("No files dropped.");
+    return;
+  }
+
+  const file = files[0];
+
+  try {
+    const base64 = await convertToBase64(file);
+    console.log(base64);
+    updateUI(base64);
+
+    localStorage.setItem("base64", base64);
+    localStorage.setItem("pathName", file.name);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+async function checkSelected() {
+  if (fileInput.files[0]) {
+    isError = false;
+    selectedImg.style.display = "flex";
+    dropZone.style.display = "none";
+    imageName.innerHTML = fileInput.files[0].name;
+  } else {
+    isError = true;
+    selectedImg.style.display = "none";
+    dropZone.style.display = "flex";
+    imageName.innerHTML = "";
+  }
+}
+
+fileInput.addEventListener("change", checkSelected);
+
+closeBtn.addEventListener("click", (e) => {
+  fileInput.value = "";
+  dropZone.style.display = "flex";
+  selectedImg.style.display = "none";
+  imageName.innerHTML = "";
+  localStorage.setItem("pathName", "");
+  localStorage.setItem("base64", "");
+});
+fileInput.addEventListener("change", async () => {
+  const file = fileInput.files[0];
+  if (file) {
+    try {
+      const base64 = await convertToBase64(file);
+      console.log(base64);
+      updateUI(base64);
+      localStorage.setItem("base64", base64);
+      localStorage.setItem("pathName", file.name);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+});
+
+function storeImage() {
+  const base64 = localStorage.getItem("base64");
+  const filePath = localStorage.getItem("pathName");
+
+  if (base64 && filePath) {
+    isError = false;
+    selectedImg.style.display = "flex";
+    dropZone.style.display = "none";
+    imageName.innerHTML = filePath;
+  } else {
+    isError = true;
+    selectedImg.style.display = "none";
+    dropZone.style.display = "flex";
+    imageName.innerHTML = "";
+  }
+}
+
+let buttonArr = [];
+
+function getInputValues() {
+  const authorValue = localStorage.getItem("authorInput");
+  const titleValue = localStorage.getItem("blogTitle");
+  const descValue = localStorage.getItem("blogDesc");
+  const emailValue = localStorage.getItem("email");
+  const dateValue = localStorage.getItem("blogDate");
+  const buttonsArray = localStorage.getItem("buttonArr");
+  authorInput.value = authorValue;
+  blogTitle.value = titleValue;
+  blogDesr.value = descValue;
+  userMail.value = emailValue;
+  blogDate.value = dateValue;
+
+  const finalbuttonsArray = buttonsArray !== "" ? buttonsArray.split(",") : [];
+  buttonArr = finalbuttonsArray;
+  console.log(buttonArr);
+  buttonArr.map((text) => {
+    let backgroundColor;
+    if (text === "აპლიკაცია") {
+      backgroundColor = "#1CD67D";
+    }
+    if (text === "მარკეტი") {
+      console.log("market-exists");
+      backgroundColor = "#FFB82F";
+    }
+    if (text === "ხელოვნური ინტელექტი") {
+      backgroundColor = "#B11CD6";
+      console.log("AI exists");
+    }
+    if (text === "Figma") {
+      backgroundColor = "#08D2AE";
+      console.log("figma exists");
+    }
+    if (text === "კვლევა") {
+      backgroundColor = "#70CF25";
+      console.log("kvleva exists");
+    }
+    if (text === "UI/UX") {
+      backgroundColor = "#FA5757";
+      display = "none";
+      console.log("UI/UX exists");
+    }
+
+    selectCategorySpan.style.display = "none";
+    categoryList.innerHTML += `<button style="color:white; background-color:${backgroundColor}"; min-width:100px; class="blog-type-btns">${text}<span>X</span></button>`;
+  });
+}
+
+function checkBtnArr() {
+  const btnArr = localStorage.getItem("buttonArr");
+  let splitedArr = btnArr.split(",");
+
+  splitedArr = splitedArr.filter((text) => {
+    return (
+      text === "აპლიკაცია" ||
+      text === "კვლევა" ||
+      text === "ხელოვნური ინტელექტი" ||
+      text === "Figma" ||
+      text === "მარკეტი" ||
+      text === "UI/UX"
+    );
+  });
+  console.log(splitedArr);
+  localStorage.setItem("buttonArr", splitedArr);
+}
+checkBtnArr();
+storeImage();
+getInputValues();
+async function getButtons() {
+  try {
+    const response = await fetch(
+      "https://george.pythonanywhere.com/api/categories/?fbclid=IwAR2Pd6I_ZErVTAitXhLURdYgc6n9oPHC82KSmODMQCqK3e-lr76xJWawXF8_aem_AUUE9aDvLBti-daJl09LRsicTf-ngylg8US2U_v26VUkXefTFNysCCGj3Gp2K-_1YQRA9O494DL7TNYn0jSpQZs0"
+    );
+    const data = await response.json();
+
+    const correctData = data.slice(0, 6);
+    correctData.forEach((item) => {
+      categorySelector.innerHTML += `<button style="color:white; filter:brightness(95%); cursor:pointer;background-color:${item.background_color}" class="blog-type-btns">${item.title}</button>`;
     });
-  });
+    let categoryBtns = [];
+    let clonedButton;
+    categorySelector.addEventListener("click", (event) => {
+      event.preventDefault();
+      if (buttonArr.includes(event.target.textContent.trim())) return;
+      buttonArr.push(event.target.textContent.trim());
+      localStorage.setItem("buttonArr", buttonArr);
+      if (event.target.classList.contains("blog-type-btns")) {
+        selectCategorySpan.style.display = "none";
 
-  let blogDescr = blogById.description;
-  let blogDate = blogById.date.slice(0, 10);
-  let blogHTML = `
+        event.target.style.filter = "brightness(105%)";
+        if (event.target.style.filter === "brightness(105%)") {
+          categoryBtns.push(event.target);
+        }
+        const X = document.createElement("span");
+        X.append("X");
+        clonedButton = event.target.cloneNode(true);
+        clonedButton.classList.add("cloned-btn-styles");
+        clonedButton.append(X);
+        categoryList.appendChild(clonedButton);
+      }
+    });
 
-              <div class="user-blog">
-              <img src="${blogById.image}" alt="blog-img" class="blog-img" />
+    categoryList.addEventListener("click", (event) => {
+      event.preventDefault();
+      let parentBtnText = event.target.parentElement.textContent
+        .trim()
+        .split("X")[0]
+        .trim();
+      buttonArr = buttonArr.filter((item) => {
+        return item.trim().toLowerCase() !== parentBtnText.toLowerCase();
+      });
+      if (event.target.textContent === "X") {
+        event.target.parentElement.remove();
+        const index = categoryBtns.findIndex(
+          (btn) => btn.textContent.trim() === parentBtnText
+        );
+        if (index !== -1) {
+          categoryBtns[index].style.filter = "brightness(95%)";
 
-              <div class="blogger-info">
-              <span class="blogger-name">${blogById.author}</span>
-              <div class="email-and-date">
-              <span class="publish-date">${blogDate} .</span>
-              
-              <span>${blogById.email}<span>
-              </div>
-              <div class="blog-title ">
-                <h2>${blogById.title}</h2>
-                </div>
-                <div class="blog-types-container">
+          categoryBtns.splice(index, 1);
+        }
+      }
 
-                </div>
-                </div>
-                <div class="blog-description">
-              <p>${blogDescr}</p>
-              </div>
-              </div>
-              `;
-
-  blogSection.innerHTML += blogHTML;
-
-  let typesContainer = document.querySelector(".blog-types-container");
-
-  blogById.types.forEach((type) => {
-    let backgroundColor = "";
-    switch (type) {
-      case "მარკეტი":
-        backgroundColor = "#D6961C";
-        break;
-      case "აპლიკაცია":
-        backgroundColor = "#15C972";
-        break;
-      case "ხელოვნური ინტელექტი":
-        backgroundColor = "#B71FDD";
-        break;
-      case "Figma":
-        backgroundColor = "#08D2AE";
-        break;
-      case "კვლევა":
-        backgroundColor = "#60BE16";
-        break;
-      case "UI/UX":
-        backgroundColor = "#DC2828";
-        break;
-      default:
-        backgroundColor = "#000000";
-    }
-    let button = document.createElement("button");
-    button.classList.add("blog-type-btns");
-    button.textContent = type;
-    button.style.backgroundColor = backgroundColor;
-    button.style.color = "white";
-    typesContainer.appendChild(button);
-  });
+      if (
+        event.target.parentElement.textContent.split("X")[0].trim() === "UI/U"
+      ) {
+        buttonArr = buttonArr.filter((button) => {
+          return button !== "UI/UX";
+        });
+      }
+      console.log(buttonArr);
+      localStorage.setItem("buttonArr", buttonArr);
+      if (categoryList.children.length == 1) {
+        selectCategorySpan.style.display = "block";
+        submitBtn.classList.remove("active-submit");
+        localStorage.setItem("buttonArr", "");
+      } else {
+        selectCategorySpan.style.display = "none";
+      }
+      if (categoryList.children.length > 1) {
+        categoryContainer.style.outline = "1px solid #14D81C";
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
 }
+getButtons();
 
-getSingleBlog();
+arrowDown.addEventListener("click", () => {
+  categoryContainer.style.outline = "1.5px solid #5D37F3";
 
-if (localStorage.getItem("authenticated")) {
-  logInBtn.replaceWith(addBlogBtn);
-  addBlogBtn.style.display = "block";
-}
+  arrowDown.classList.toggle("turn-down");
+  categorySelector.classList.toggle("visible-selector");
 
-logInBtn.addEventListener("click", () => {
-  loginWindowContainer.style.display = "flex";
-  loginWindow.style.display = "flex";
-});
-emailInput.addEventListener("click", () => {
-  emailInput.style.border = "1.5px solid #5D37F3;";
-});
-shesvla.addEventListener("click", async () => {
-  if (emailInput.value === "tato@redberry.ge") {
-    localStorage.setItem("authenticated", JSON.stringify(true));
-    loginWindow.style.display = "none";
-    succeed.style.display = "flex";
+  if (categoryList.children.length > 1) {
+    categoryContainer.style.outline = "1px solid  #14D81C";
   } else {
-    emaiLError.style.display = "flex";
+    selectCategorySpan.style.display = "block";
   }
 });
-closeBtn.forEach((item) => {
-  item.addEventListener("click", () => {
-    loginWindowContainer.style.display = "none";
-    succeed.style.display = "none";
-    if (succeed.style.display === "flex") {
-      addBlogBtn.style.display = "block";
-      logInBtn.style.display = "none";
-    }
-  });
+
+authorInput.addEventListener("input", () => {
+  authorInput.style.background = "white";
+  authorInput.style.outline = "none";
+  authorInput.style.outline = "1.5px solid #5D37F3";
+
+  if (authorInput.value.length >= 4) {
+    fourSymblol.style.color = "#14D81C";
+    isError = false;
+  } else {
+    isError = true;
+    localStorage.setItem("authorInput", "");
+  }
+
+  let splitedValue = authorInput.value.split(" ");
+  splitedValue = splitedValue?.filter((word) => word !== "");
+
+  console.log(splitedValue);
+  if (splitedValue[0]?.trim() && splitedValue[1]?.trim()) {
+    isError = false;
+    twoWords.style.color = "#14D81C";
+  } else {
+    twoWords.style.color = "#85858D";
+    isError = true;
+  }
+
+  const georgianRegex = /[\u10A0-\u10FF]/;
+  if (georgianRegex.test(authorInput.value)) {
+    georgianSymbol.style.color = "#14D81C";
+    isError = false;
+  } else {
+    georgianSymbol.style.color = "#85858D";
+    isError = true;
+  }
 });
 
-okBtn.addEventListener("click", () => {
-  loginWindowContainer.style.display = "none";
-  succeed.style.display = "none";
-  addBlogBtn.style.display = "block";
-  logInBtn.replaceWith(addBlogBtn);
+authorInput.addEventListener("change", () => {
+  let splitedValue = authorInput.value.split(" ");
+  splitedValue = splitedValue?.filter((word) => word !== "");
+
+  console.log(splitedValue);
+  if (splitedValue[0]?.trim() && splitedValue[1]?.trim()) {
+    isError = false;
+    twoWords.style.color = "#14D81C";
+  } else {
+    twoWords.style.color = "#85858D";
+    isError = true;
+  }
+  if (isError) {
+    localStorage.setItem("authorInput", "");
+    authorInput.style.outline = "1px solid #EA1919";
+    authorInput.style.background = "#FAF2F3";
+    errorSpan.forEach((item) => {
+      item.style.color = "red";
+    });
+  } else {
+    localStorage.setItem("authorInput", authorInput.value);
+    authorInput.style.background = "white";
+    authorInput.style.outline = "1px solid #14D81C";
+    errorSpan.forEach((item) => {
+      item.style.color = "#14D81C";
+    });
+  }
 });
-storeBlogAddBtn();
-function storeBlogAddBtn() {
-  if (localStorage.getItem("blogAddBtn")) {
-    addBlogBtn.style.display = "block";
-    logInBtn.style.display = "none";
+
+blogTitle.addEventListener("input", () => {
+  blogTitle.style.background = "white";
+  blogTitle.style.outline = "none";
+  blogTitle.style.outline = "1.5px solid #5D37F3";
+  if (blogTitle.value.length >= 4) {
+    isError = false;
+    headingCharacters.style.color = "#14D81C";
+  } else {
+    isError = true;
+    headingCharacters.style.color = "#85858D";
+  }
+});
+blogTitle.addEventListener("change", () => {
+  if (blogTitle.value.length < 4 || blogTitle.value === "") {
+    isError = true;
+    localStorage.setItem("blogTitle", "");
+    blogTitle.style.outline = "1px solid #EA1919";
+    blogTitle.style.background = "#FAF2F3";
+    headingCharacters.style.color = "#EA1919";
+  } else {
+    isError = false;
+    localStorage.setItem("blogTitle", blogTitle.value);
+    blogTitle.style.outline = "1px solid #14D81C";
+    blogTitle.style.background = "white";
+  }
+});
+blogDesr.addEventListener("click", () => {
+  blogDesr.style.background = "white";
+  blogDesr.style.outline = "1.5px solid #5D37F3";
+  descrSymbol.style.color = "#85858D";
+});
+blogDesr.addEventListener("change", () => {
+  if (blogDesr.value === "" || blogDesr.value.length < 4) {
+    isError = true;
+    localStorage.setItem("blogDesc", "");
+    blogDesr.style.outline = "1.5px solid #EA1919";
+    blogDesr.style.background = "#FAF2F3";
+    descrSymbol.style.color = "#EA1919";
+  } else {
+    isError = false;
+    localStorage.setItem("blogDesc", blogDesr.value);
+    blogDesr.style.outline = " 1.5px solid #14D81C";
+    descrSymbol.style.color = "#14D81C";
+  }
+});
+blogDate.addEventListener("click", (e) => {
+  dateContainer.style.outline = "1.5px solid #5D37F3";
+});
+blogDate.addEventListener("change", (e) => {
+  if (blogDate.value === "") {
+    localStorage.setItem("blogDate", "");
+    isError = true;
+    dateContainer.style.outline = "1px solid #EA1919";
+  } else {
+    isError = false;
+    localStorage.setItem("blogDate", blogDate.value);
+    dateContainer.style.outline = "1px solid #14D81C";
+  }
+});
+
+userMail.addEventListener("click", () => {
+  if (userMail.classList.contains("email-error")) {
+    return;
+  }
+
+  userMail.style.outline = "1.5px solid #5D37F3";
+});
+
+userMail.addEventListener("change", (e) => {
+  e.preventDefault();
+  const validEmail = userMail.value.split("@");
+  if (validEmail[1] !== "redberry.ge") {
+    isError = true;
+    localStorage.setItem("email", "");
+    userMail.classList.add("email-error");
+    emailErr.style.display = "flex";
+  } else {
+    isError = false;
+    localStorage.setItem("email", userMail.value);
+    userMail.classList.remove("email-error");
+    userMail.classList.add("email-success");
+    emailErr.style.display = "none";
+  }
+});
+
+function validateInputs() {
+  const keys = [
+    "blogDesc",
+    "buttonArr",
+    "blogTitle",
+    "email",
+    "blogDate",
+    "pathName",
+    "authorInput",
+  ];
+
+  return keys.every((key) => localStorage.getItem(key));
+}
+function toggleSubmitButton() {
+  if (categoryList.children.length === 1) {
+    submitBtn.classList.remove("active-submit");
+    selectCategorySpan.style.display = "block";
+  }
+
+  if (validateInputs()) {
+    submitBtn.classList.add("active-submit");
+    return true;
+  } else {
+    submitBtn.classList.remove("active-submit");
   }
 }
-addBlogBtn.addEventListener("click", () => {
-  console.log("sadasd");
-  document.location.href = "./add blog/add-blog.html";
-});
-backArrow.addEventListener("click", () => {
-  console.log("gsad");
-  document.location.href = "./index.html";
-});
-let width;
-let currentPosition = 0; // Initialize the current position
 
-arrowRight.addEventListener("click", () => {
-  width = similarBlogs.getBoundingClientRect().width;
-  if (currentPosition < width) {
-    currentPosition += 600;
-    similarBlogs.style.transform = `translateX(-${currentPosition}px)`;
-    arrowLeft.classList.add("active-arrow");
-    console.log(currentPosition);
-    console.log(width);
-  } else {
-    arrowRight.classList.remove("active-arrow");
-    arrowLeft.classList.add("active-arrow");
-    currentPosition = width;
-  }
-});
+fileInput.addEventListener("change", toggleSubmitButton);
+authorInput.addEventListener("change", toggleSubmitButton);
+blogTitle.addEventListener("change", toggleSubmitButton);
+blogDesr.addEventListener("change", toggleSubmitButton);
+blogDate.addEventListener("change", toggleSubmitButton);
+userMail.addEventListener("change", toggleSubmitButton);
+categoryList.addEventListener("click", toggleSubmitButton);
+closeBtn.addEventListener("click", toggleSubmitButton);
+arrowDown.addEventListener("click", toggleSubmitButton);
 
-arrowLeft.addEventListener("click", () => {
-  if (arrowLeft.classList.contains("active-arrow")) {
-    if (currentPosition <= width) {
-      currentPosition = width / currentPosition;
-      similarBlogs.style.transform = `translateX(${currentPosition}px)`;
-      arrowRight.classList.add("active-arrow");
-    } else {
-      similarBlogs.style.transform = `translateX(0px)`;
-      currentPosition = 0;
-      arrowLeft.classList.remove("active-arrow");
+submitBtn.addEventListener("click", async (e) => {
+  e.preventDefault();
+  if (submitBtn.classList.contains("active-submit")) {
+    console.log("sadasd");
+    try {
+      const response = await fetch(
+        "https://blog-api-h6k6.onrender.com/add-blog",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            image: base64,
+            author: authorInput.value,
+            title: blogTitle.value,
+            description: blogDesr.value,
+            date: blogDate.value,
+            email: userMail.value,
+            types: buttonArr,
+          }),
+        }
+      );
+      if (!response.ok) throw new Error("failed Posting data");
+      clonedBtns = document.querySelectorAll(".cloned-btn-styles");
+      console.log(response);
+      main.style.opacity = "0.25";
+      blogAddedWindow.classList.add("active-window");
+      fileInput.value = "";
+      selectedImg.style.display = "none";
+      dropZone.style.display = "flex";
+      imageName.innerHTML = "";
+      userMail.value = "";
+      blogDate.value = "";
+      blogTitle.value = "";
+      authorInput.value = "";
+      blogDesr.value = "";
+      console.log(blogTypeBtns);
+      clonedBtns.forEach((item) => (item.style.display = "none"));
+
+      localStorage.setItem("authorInput", "");
+      localStorage.setItem("email", "");
+      localStorage.setItem("blogDate", "");
+      localStorage.setItem("blogTitle", "");
+      localStorage.setItem("blogDesc", "");
+      localStorage.setItem("pathName", "");
+      localStorage.setItem("base64", "");
+      localStorage.setItem("buttonArr", "");
+      selectCategorySpan.style.display = "block";
+      authorInput.style.outline = "none";
+      blogDate.style.outline = "none";
+      blogDesr.style.outline = "none";
+      blogTitle.style.outline = "none";
+      categoryContainer.style.outline = "none";
+      userMail.style.outline = "none";
+      errorSpan.forEach((item) => (item.style.color = "#85858D"));
+      headingCharacters.style.color = "#85858D";
+      descrSymbol.style.color = "#85858D";
+      userMail.classList.remove("email-success");
+      dateContainer.style.outline = "none";
+    } catch (e) {
+      console.log(e.message);
     }
+  } else {
+    return;
   }
 });
+windowClose.addEventListener("click", () => {
+  blogAddedWindow.style.display = "none";
+  main.style.opacity = "1";
+});
+returnMainPage.addEventListener("click", () => {
+  document.location.href = "../index.html";
+});
+moveToHomepage.addEventListener("click", () => {
+  document.location.href = "../index.html";
+});
+
 
 
 
