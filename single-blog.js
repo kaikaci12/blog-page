@@ -12,20 +12,20 @@ const closeBtn = document.querySelectorAll(".window-close");
 const backArrow = document.querySelector(".move-arrow");
 const arrowLeft = document.getElementById("arrow-left");
 const arrowRight = document.getElementById("arrow-right");
-
+const similarBlog = [...document.querySelectorAll("similar-blog")];
 let similarBlogs = document.getElementById("similarBlogs");
 const queryParams = new URLSearchParams(window.location.search);
 console.log(queryParams.get("id"));
 
 async function getSingleBlog() {
-  const response = await fetch("https://blog-api-h6k6.onrender.com/");
+  const response = await fetch("https://blog-api-h6k6.onrender.com/get-blogs");
   let data = await response.json();
   console.log(data);
   const id = queryParams.get("id");
   const blogById = data.find((blog) => {
     return blog._id === id;
   });
-  
+
   data = data.filter((data) => data._id !== blogById._id);
   data.map((blog) => {
     if (blog.types.some((type) => blogById.types.includes(type))) {
@@ -224,23 +224,36 @@ backArrow.addEventListener("click", () => {
   console.log("gsad");
   document.location.href = "./index.html";
 });
+let width;
+let currentPosition = 0; // Initialize the current position
 
 arrowRight.addEventListener("click", () => {
-  
-  const width = Math.round(similarBlogs.getBoundingClientRect().width);
-  
-  console.log(width);
-  similarBlogs.style.transform = `translateX(${-(
-    window.outerWidth +
-    300 -
-    width
-  )}px)`;
-  arrowLeft.classList.add("active-arrow");
-  arrowRight.classList.remove("active-arrow");
+  width = similarBlogs.getBoundingClientRect().width;
+  if (currentPosition < width) {
+    currentPosition += 600;
+    similarBlogs.style.transform = `translateX(-${currentPosition}px)`;
+    arrowLeft.classList.add("active-arrow");
+    console.log(currentPosition);
+    console.log(width);
+  } else {
+    arrowRight.classList.remove("active-arrow");
+    arrowLeft.classList.add("active-arrow");
+    currentPosition = width;
+  }
 });
-console.log(window.outerWidth);
+
 arrowLeft.addEventListener("click", () => {
-  similarBlogs.style.transform = "translateX(0)";
-  arrowRight.classList.add("active-arrow");
-  arrowLeft.classList.remove("active-arrow");
+  if (arrowLeft.classList.contains("active-arrow")) {
+    if (currentPosition <= width) {
+      currentPosition = width / currentPosition;
+      similarBlogs.style.transform = `translateX(${currentPosition}px)`;
+      arrowRight.classList.add("active-arrow");
+    } else {
+      similarBlogs.style.transform = `translateX(0px)`;
+      currentPosition = 0;
+      arrowLeft.classList.remove("active-arrow");
+    }
+  }
 });
+
+
