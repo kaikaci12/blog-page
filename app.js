@@ -27,7 +27,9 @@ let activeCategories = [];
 
 async function getBlogs() {
   try {
-    const response = await fetch("https://blog-api-h6k6.onrender.com/");
+    const response = await fetch(
+      "https://blog-api-h6k6.onrender.com/get-blogs"
+    );
     if (!response.ok) {
       throw new Error("Error fetching data");
     }
@@ -271,5 +273,6 @@ seeAll.forEach((button) => {
     console.log(213);
   });
 });
+
 
 
