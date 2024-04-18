@@ -567,7 +567,8 @@ submitBtn.addEventListener("click", async (e) => {
       authorInput.value = "";
       blogDesr.value = "";
       console.log(blogTypeBtns);
-      clonedBtns.forEach((item) => item.remove());
+      clonedBtns.forEach((item) => item.style.display="none");
+      
       localStorage.setItem("authorInput", "");
       localStorage.setItem("email", "");
       localStorage.setItem("blogDate", "");
