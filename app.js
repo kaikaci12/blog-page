@@ -27,7 +27,7 @@ let activeCategories = [];
 
 async function getBlogs() {
   try {
-    const response = await fetch("http://localhost:4000/get-blogs");
+    const response = await fetch("https://blog-api-h6k6.onrender.com/");
     if (!response.ok) {
       throw new Error("Error fetching data");
     }
@@ -271,12 +271,5 @@ seeAll.forEach((button) => {
     console.log(213);
   });
 });
-async function seeWholeBlog(id) {
-  const response = await fetch(`http://localhost:4000/get-blogs/${id}`);
-  if (!response.ok) {
-    throw new Error("Error fetching data");
-  }
-  const data = await response.json();
-  console.log(data);
-}
+
 
