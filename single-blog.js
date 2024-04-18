@@ -18,13 +18,14 @@ const queryParams = new URLSearchParams(window.location.search);
 console.log(queryParams.get("id"));
 
 async function getSingleBlog() {
-  const response = await fetch("http://localhost:4000/get-blogs");
+  const response = await fetch("https://blog-api-h6k6.onrender.com/");
   let data = await response.json();
   console.log(data);
   const id = queryParams.get("id");
   const blogById = data.find((blog) => {
     return blog._id === id;
   });
+  
   data = data.filter((data) => data._id !== blogById._id);
   data.map((blog) => {
     if (blog.types.some((type) => blogById.types.includes(type))) {
@@ -225,7 +226,9 @@ backArrow.addEventListener("click", () => {
 });
 
 arrowRight.addEventListener("click", () => {
+  
   const width = Math.round(similarBlogs.getBoundingClientRect().width);
+  
   console.log(width);
   similarBlogs.style.transform = `translateX(${-(
     window.outerWidth +
