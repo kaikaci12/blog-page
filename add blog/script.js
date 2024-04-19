@@ -543,19 +543,22 @@ submitBtn.addEventListener("click", async (e) => {
     console.log("sadasd");
     try {
       console.log(base64);
-      const response = await fetch("http://localhost:4000/add-blog", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          image: base64,
-          author: authorInput.value,
-          title: blogTitle.value,
-          description: blogDesr.value,
-          date: blogDate.value,
-          email: userMail.value,
-          types: buttonArr,
-        }),
-      });
+      const response = await fetch(
+        "https://blog-api-h6k6.onrender.com/add-blog",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            image: base64,
+            author: authorInput.value,
+            title: blogTitle.value,
+            description: blogDesr.value,
+            date: blogDate.value,
+            email: userMail.value,
+            types: buttonArr,
+          }),
+        }
+      );
 
       if (!response.ok) throw new Error("failed Posting data");
 
