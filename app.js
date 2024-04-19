@@ -27,7 +27,9 @@ let activeCategories = [];
 
 async function getBlogs() {
   try {
-    const response = await fetch("http://localhost:4000/get-blogs");
+    const response = await fetch(
+      "https://blog-api-h6k6.onrender.com/get-blogs"
+    );
     if (!response.ok) {
       throw new Error("Error fetching data");
     }

@@ -19,7 +19,7 @@ console.log(queryParams.get("id"));
 
 let dataCopy = [];
 async function getSingleBlog() {
-  const response = await fetch("http://localhost:4000/get-blogs");
+  const response = await fetch("https://blog-api-h6k6.onrender.com/get-blogs");
   let data = await response.json();
 
   const id = queryParams.get("id");
