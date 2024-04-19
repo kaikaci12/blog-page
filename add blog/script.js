@@ -157,10 +157,12 @@ fileInput.addEventListener("change", async () => {
   const file = fileInput.files[0];
   if (file) {
     try {
-      const base64 = await convertToBase64(file);
-      console.log(base64);
-      updateUI(base64);
-      localStorage.setItem("base64", base64);
+      const base65 = await convertToBase64(file);
+
+      updateUI();
+      base64 = base65;
+
+      localStorage.setItem("base64", base65);
       localStorage.setItem("pathName", file.name);
     } catch (error) {
       console.error(error);
@@ -540,6 +542,7 @@ submitBtn.addEventListener("click", async (e) => {
   if (submitBtn.classList.contains("active-submit")) {
     console.log("sadasd");
     try {
+      console.log(base64);
       const response = await fetch("http://localhost:4000/add-blog", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -553,7 +556,9 @@ submitBtn.addEventListener("click", async (e) => {
           types: buttonArr,
         }),
       });
+
       if (!response.ok) throw new Error("failed Posting data");
+
       clonedBtns = document.querySelectorAll(".cloned-btn-styles");
       console.log(response);
       main.style.opacity = "0.25";
