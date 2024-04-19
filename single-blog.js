@@ -17,18 +17,21 @@ let similarBlogs = document.getElementById("similarBlogs");
 const queryParams = new URLSearchParams(window.location.search);
 console.log(queryParams.get("id"));
 
+let dataCopy = [];
 async function getSingleBlog() {
-  const response = await fetch("https://blog-api-h6k6.onrender.com/get-blogs");
+  const response = await fetch("http://localhost:4000/get-blogs");
   let data = await response.json();
-  console.log(data);
+
   const id = queryParams.get("id");
   const blogById = data.find((blog) => {
     return blog._id === id;
   });
 
   data = data.filter((data) => data._id !== blogById._id);
-  data.map((blog) => {
+
+  data.slice(0, 5).map((blog) => {
     if (blog.types.some((type) => blogById.types.includes(type))) {
+      dataCopy.push(blog);
       let blogDescr = blog.description.slice(0, 90);
       let blogDate = blog.date.slice(0, 10);
       let blogHTML = `
@@ -221,39 +224,40 @@ addBlogBtn.addEventListener("click", () => {
   document.location.href = "./add blog/add-blog.html";
 });
 backArrow.addEventListener("click", () => {
-  console.log("gsad");
   document.location.href = "./index.html";
 });
-let width;
-let currentPosition = 0; // Initialize the current position
+
+let arrowRightCount = 0;
 
 arrowRight.addEventListener("click", () => {
-  width = similarBlogs.getBoundingClientRect().width;
-  if (currentPosition < width) {
-    currentPosition += 600;
-    similarBlogs.style.transform = `translateX(-${currentPosition}px)`;
-    arrowLeft.classList.add("active-arrow");
-    console.log(currentPosition);
-    console.log(width);
-  } else {
+  console.log(dataCopy);
+  if (arrowRightCount === 1 && dataCopy.length === 5) {
     arrowRight.classList.remove("active-arrow");
-    arrowLeft.classList.add("active-arrow");
-    currentPosition = width;
   }
+  if (dataCopy.length === 5 && arrowRightCount == 2) {
+    return;
+  }
+  if (arrowRightCount === 0 && dataCopy.length === 4) {
+    arrowRight.classList.remove("active-arrow");
+  }
+
+  if (dataCopy.length === 4 && arrowRightCount === 1) {
+    return;
+  }
+
+  if (dataCopy.length === 3) {
+    return;
+  }
+  arrowLeft.classList.add("active-arrow");
+  arrowRightCount++;
+  let transformWidth = 408 * arrowRightCount;
+  console.log(transformWidth);
+  similarBlogs.style.transform = `translateX(-${transformWidth}px)`;
 });
 
 arrowLeft.addEventListener("click", () => {
-  if (arrowLeft.classList.contains("active-arrow")) {
-    if (currentPosition <= width) {
-      currentPosition = width / currentPosition;
-      similarBlogs.style.transform = `translateX(${currentPosition}px)`;
-      arrowRight.classList.add("active-arrow");
-    } else {
-      similarBlogs.style.transform = `translateX(0px)`;
-      currentPosition = 0;
-      arrowLeft.classList.remove("active-arrow");
-    }
-  }
+  arrowRightCount = 0;
+  similarBlogs.style.transform = `translateX(0px)`;
+  arrowRight.classList.add("active-arrow");
+  arrowLeft.classList.remove("active-arrow");
 });
-
-

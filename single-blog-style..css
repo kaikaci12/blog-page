@@ -85,6 +85,7 @@ main {
   width: 720px;
   height: 365px;
   border-radius: 12px;
+  object-fit: cover;
 }
 .blogger-info {
   display: flex;
@@ -306,7 +307,7 @@ main {
   display: flex;
   width: 100%;
   justify-content: space-between;
-  margin-top:30%;
+  margin-top: 30%;
 }
 .familiar-blogs-container {
   padding: 0 76px;
@@ -429,15 +430,14 @@ main {
   }
   .blog-description {
     padding: 5px;
-    width:100vw;
-    overflow-y:scroll;
+    width: 100vw;
+    overflow-y: scroll;
   }
   .blog-description p {
     margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 9;
     -webkit-box-orient: vertical;
-    
   }
   .move-arrow {
     width: 35px;
@@ -446,7 +446,7 @@ main {
   }
   .blogs-mover-container {
     padding: 0;
-    margin-top:10%;
+    margin-top: 10%;
   }
   .blogs-mover-container h2 {
     font-size: 25px;
